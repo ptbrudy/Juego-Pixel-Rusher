@@ -1,0 +1,5 @@
+{
+  "name": "Pixel Rusher",
+  "description": "An addictive retro-style arcade game where you must dodge falling blocks to survive. The longer you last, the higher your score!",
+  "requestFramePermissions": []
+}
