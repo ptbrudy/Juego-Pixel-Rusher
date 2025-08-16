@@ -63,38 +63,38 @@ COMMENT ON COLUMN public.scores.player_id IS 'Links to the player who achieved t
 
 ### 3. Row Level Security (RLS)
 
-For security, it's crucial to enable Row Level Security (RLS) on your tables and define policies for who can read or write data. You should enable RLS on both tables and then create policies.
+For security, it's crucial to enable Row Level Security (RLS) on your tables. Since this is a public leaderboard, we will create policies that allow anyone to read scores and add new ones, which is appropriate for this type of game.
 
-**Example Policies:**
-Here are some basic policies. You can run these in the SQL Editor after creating the tables.
+**Enable RLS and Create Policies:**
+Run these SQL commands in your Supabase project's SQL Editor after creating the tables.
 
 ```sql
 -- 1. Enable RLS on both tables
 ALTER TABLE public.players ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.scores ENABLE ROW LEVEL SECURITY;
 
--- 2. Create a policy to allow anyone to read player and score data
--- This is useful for public leaderboards.
-CREATE POLICY "Allow public read access"
+-- 2. Create policies to allow public read access (for leaderboards)
+-- This lets anyone view the players and scores.
+CREATE POLICY "Allow public read access on players"
 ON public.players FOR SELECT
 USING (true);
 
-CREATE POLICY "Allow public read access"
+CREATE POLICY "Allow public read access on scores"
 ON public.scores FOR SELECT
 USING (true);
 
--- 3. Create a policy to allow any authenticated user to add new players and scores.
--- This assumes you have Supabase Auth set up.
--- For a simple game without logins, you might use anon key access with more restrictive rules.
-CREATE POLICY "Allow authenticated users to insert players"
+-- 3. Create policies to allow anonymous users to add players and scores
+-- This uses the 'anon' role, which is the default for requests using the anon key.
+-- It allows the game client to submit new players and scores without user logins.
+CREATE POLICY "Allow anonymous users to insert players"
 ON public.players FOR INSERT
-TO authenticated
+TO anon
 WITH CHECK (true);
 
-CREATE POLICY "Allow authenticated users to insert scores"
+CREATE POLICY "Allow anonymous users to insert scores"
 ON public.scores FOR INSERT
-TO authenticated
+TO anon
 WITH CHECK (true);
 ```
 
-With this setup, you can use the Supabase client library in your application to fetch and submit high scores.
+With this setup, the Supabase client library in your application can successfully fetch and submit high scores.
